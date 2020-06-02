@@ -1,0 +1,6 @@
+Scrivi questo: ci stiamo occupando della scrittura in un file!
+# riga 2
+riga 3
+# riga 4
+# riga 5
+ etc...
