@@ -3,10 +3,10 @@
 
 # Lista software per il corso di Informatica Musicale
 ## editor di testo
-- Atom
+- Atom ---> https://atom.io/
 ## linguaggi di programmazione e strumenti di sintesi
-- Csound
-- Pure Data
-- Python3
+- Csound ---> https://csound.com/
+- Pure Data ---> https://puredata.info/
+- Python3 ---> https://www.python.org/
 ## visualizzazione ed analisi dei segnali
-- Sonic Visualizer
+- Sonic Visualizer ---> https://www.sonicvisualiser.org/
