@@ -7,7 +7,7 @@
 
 ## >>> linguaggi di programmazione e strumenti di sintesi
 - Csound ---> https://csound.com/
-- Pure Data ---> https://puredata.info/
+- SuperCollider ---> https://supercollider.github.io/
 - Python3 ---> https://www.python.org/
 
 ## >>> visualizzazione ed analisi dei segnali
