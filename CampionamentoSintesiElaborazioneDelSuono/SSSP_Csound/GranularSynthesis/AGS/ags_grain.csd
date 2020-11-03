@@ -11,8 +11,6 @@ nchnls = 2
 
 #include "grain_function.udo"
 
-seed(0)
-
   instr costruttore
 
 giaudio_sample = open_file("testGrain_3.wav")
@@ -71,11 +69,11 @@ ifase_tab = map(iphase, 0, idur_tot_to_sample, 0, 1)
   reinit aggiorna
 
 to_grain:
-schedule("granula", 0, idur_to_time, ifreq, iamp, ispace, ifase_w, ifase_tab, idur_to_sample, ir_to_sample, idur_tot_to_sample, ii, ij, ihop)
-//											p3						p4			p5		p6			p7					p8						p9						p10					p11						 p12 p13	 p14
+schedule("granula", 0, idur_to_time, ifreq, iamp, ispace, ifase_w, ifase_tab, idur_to_sample, ii, ij, ihop)
+//											p3						p4			p5		p6				p7			p8						p9				p10	p11	 p12
 ihop += ir_to_sample
 ihop = ihop%idur_tot_to_sample
-rireturn 
+rireturn
 
   endin
 
@@ -85,8 +83,8 @@ i2pi = 2 * $M_PI
 
 ki init 0
 if(ki < p9) then
-  kndx = abs(p7 - ki) * p12
-  koverlapp = abs(p8 - p14) * p13
+  kndx = abs(p7 - ki) * p10
+  koverlapp = abs(p8 - p12) * p11
   ainv1 = interp(w_coseno(ki, p9))
   if(gitype == 0) then
     agrano = p5 * ainv1 * tablei:a(kndx + koverlapp, gifunc)
