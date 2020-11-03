@@ -11,11 +11,10 @@ nchnls = 2
 
 #include "grain_function.udo"
 
-
-gidel init 0
 seed(0)
 
   instr costruttore
+
 giaudio_sample = open_file("testGrain_3.wav")
 gilive = live_input(44100, 1)
 gifunc = giaudio_sample
@@ -23,55 +22,60 @@ iN = ftlen(gifunc)
 
 gitype = 0 // 0 ---> sound granulation e live input 1 ---> suoni sintetici
 
-giw, gioverlapp = 4096, 1024
+giw, gioverlapp = 4096/sr, 1024/sr
 
-if_min, if_max = .3, 3
-ia_min, ia_max = .03, .707
+ihop init 0
+if_min, if_max = 1, 1
+ia_min, ia_max = .3, .707
 ip_min, ip_max = 0, 0
-it_min, it_max = .001, .3
-ir_min, ir_max = .01, .3
+it_min, it_max = .01, .3
+ir_min, ir_max = .1, .3
 ispace_min, ispace_max = .5, .5
 imode = 0 // 0 ---> mantieni la stessa durata 1 ---> down/upsampling
 
 aggiorna:
 // frequenza, ampiezza e fase
-gifreq = random(if_min, if_max)
-giamp = random(ia_min, ia_max)
-giphase = random(ip_min, ip_max)
+ifreq = random(if_min, if_max)
+iamp = random(ia_min, ia_max)
+iphase = random(ip_min, ip_max)
 
 // durata del grano
-gidur_grano = random(it_min, it_max)
-gidur_to_sample = ceil(sr * gidur_grano)
-gidur_to_time = gidur_to_sample/sr
+idur_grano = random(it_min, it_max)
+idur_to_sample = ceil(sr * idur_grano)
+idur_to_time = idur_to_sample/sr
 
 // distanza temporale tra un grano e l'altro
-gir_grano = random(ir_min, ir_max)
-gir_to_sample = ceil(sr * gir_grano)
-gir_to_time = gir_to_sample/sr
+ir_grano = random(ir_min, ir_max)
+ir_to_sample = ceil(sr * ir_grano)
+ir_to_time = ir_to_sample/sr
 
 // gestione dello spazio
-gispace = random(ispace_min, ispace_max)
+ispace = random(ispace_min, ispace_max)
 
 if(imode == 0) then
-  gii, gij, gik = gifreq, 1, 1
+  ii, ij, ik = ifreq, 1, 1
 elseif(imode == 1) then
-  gii, gij, gik = 1, gifreq, 1/gifreq
+  ii, ij, ik = 1, ifreq, 1/ifreq
 endif
 
 idurata_totale = iN/sr // in secondi
-gidur_tot_to_time = idurata_totale * gik
-gidur_tot_to_sample = ceil(sr * gidur_tot_to_time)
-gidur_tot_to_time = gidur_tot_to_sample/sr // aggiustata
+idur_tot_to_time = idurata_totale * ik
+idur_tot_to_sample = ceil(sr * idur_tot_to_time)
+idur_tot_to_time = idur_tot_to_sample/sr // aggiustata
 
-gifase_w = map(giphase, 0, gidur_to_sample, 0, 1)
-gifase_tab = map(giphase, 0, gidur_tot_to_sample, 0, 1)
+ifase_w = map(iphase, 0, idur_to_sample, 0, 1)
+ifase_tab = map(iphase, 0, idur_tot_to_sample, 0, 1)
 
 
-  timout 0, gir_to_time, to_grain
+  timout 0, ir_to_time, to_grain
   reinit aggiorna
 
 to_grain:
-schedule("granula", 0, gidur_to_time)
+schedule("granula", 0, idur_to_time, ifreq, iamp, ispace, ifase_w, ifase_tab, idur_to_sample, ir_to_sample, idur_tot_to_sample, ii, ij, ihop)
+//											p3						p4			p5		p6			p7					p8						p9						p10					p11						 p12 p13	 p14
+ihop += ir_to_sample
+ihop = ihop%idur_tot_to_sample
+rireturn 
 
   endin
 
@@ -80,28 +84,24 @@ schedule("granula", 0, gidur_to_time)
 i2pi = 2 * $M_PI
 
 ki init 0
-if(ki < gidur_to_sample) then
-  kndx = abs(gifase_w - ki) * gii
-  koverlapp = abs(gifase_tab - gidel) * gij
-  ainv1 = w_hann(ki, gidur_to_sample)
-  ainv2 = w_coseno(ki, gidur_to_sample)
+if(ki < p9) then
+  kndx = abs(p7 - ki) * p12
+  koverlapp = abs(p8 - p14) * p13
+  ainv1 = interp(w_coseno(ki, p9))
   if(gitype == 0) then
-    agrano = giamp * ainv1 * tablei:a(kndx + koverlapp, gifunc)
+    agrano = p5 * ainv1 * tablei:a(kndx + koverlapp, gifunc)
   elseif(gitype == 1) then
-    agrano = giamp * sin(i2pi * gifreq/sr * ki)
-    agrano *= ainv2
+    agrano = p5 * ainv1 * sin(i2pi * p4/sr * ki)
   endif
   ki += 1
 endif
 
-gidel += gir_to_sample
-gidel = gidel%(gidur_tot_to_sample)
-
-aleft = agrano * sqrt(gispace)
-aright = agrano * (1 - sqrt(gispace))
+aleft = agrano * sqrt(p6)
+aright = agrano * (sqrt(1 - p6))
 outs(aleft, aright)
 
   endin
+
 
 
 </CsInstruments>
