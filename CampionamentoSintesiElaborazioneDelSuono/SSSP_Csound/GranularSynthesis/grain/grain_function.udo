@@ -79,14 +79,14 @@ opcode features_sound_granulation, 0, Siiiiiiiiiiiiii
         ir_to_time = ir_to_sample/sr
 
         if(imode_value == 0) then
-            ii, ij, ik = ifreq, 1, 1
+            ii, ij, ik = ifreq, ifreq, 1/ifreq
         elseif(imode_value == 1) then
-            ii, ij, ik = 1, ifreq, 1/ifreq
+            ii, ij, ik = 1, ifreq, 1
         endif
 
         // informazioni per modulo finestra e calcolo punto di fase
         idurata_totale = ilen/sr // durata totale sound file
-        idurata_totale_to_time = idurata_totale * ii
+        idurata_totale_to_time = idurata_totale * ik
         idurata_totale_to_sample = ceil(idurata_totale_to_time * sr)
         idurata_totale_to_time = idurata_totale_to_sample/sr
 
